@@ -1,0 +1,61 @@
+[include]
+  path = "./perso"
+[includeIf "gitdir:~/Projects/42/"]
+  path = "./42"
+[color]
+  ui = true
+[branch]
+  autosetupmerge  = always
+  autosetuprebase = always
+[core]
+  excludesfile = "~/.config/git/ignore"
+  editor = nvim
+[color]
+  branch      = auto
+  diff        = auto
+  status      = auto
+  interactive = auto
+[alias]
+  abandon-branch-for = "!f() { git branch | ag '^\\* ' | head -n 1 | cut -d' ' -f2 ; }; BRANCH=`f`; git checkout $1 && git pull origin $1 && git fetch origin --prune && git branch -D $BRANCH #"
+  add-modifications  = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; git add `f`"
+  add-unmerged       = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+  am       = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; git add `f`"
+  ap       = add --patch
+  au       = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+  bd       = branch -D
+  bc       = "!f() { git rev-parse --abbrev-ref HEAD | grep -oP \"^\\w+-\\d+\" ; }; f"
+  ca       = commit --amend
+  cb       = checkout -b
+  ci       = commit
+  cif      = "!f() { BRANCH=`git bc`; git commit -m \"[$BRANCH] $1\"; }; f"
+  co       = checkout
+  d        = diff
+  dhb      = rev-parse --abbrev-ref HEAD
+  du       = diff @{u}
+  edit-modifications = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; vim `f`"
+  edit-unmerged      = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+  em       = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; vim `f`"
+  eu       = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+  fpo      = fetch --prune origin
+  last-message = log -n 1 --format=format:'%s'
+  lp       = log -p
+  p        = push
+  pf       = push -f
+  pfl      = push --force-with-lease
+  pflo     = push --force-with-lease origin
+  pfloh    = push --force-with-lease origin HEAD
+  ra       = rebase --abort
+  rc       = rebase --continue
+  s        = status
+  sw       = switch
+  tree     = log --graph --abbrev-commit --decorate --format=format:'%C(blue)%h%C(reset) - %C(green)(%ai%C(reset) %C(green)%ar)%C(reset) %s%C(reset) %C(dim blue)- %an%C(reset)%C(yellow)%d%C(reset)' --all
+  tree-fat = log --graph --abbrev-commit --decorate --format=format:'%C(blue)%h%C(reset) - %C(cyan)%aD%C(reset) %C(green)(%ar)%C(reset)%C(yellow)%d%C(reset)%n''          %s%C(reset) %C(dim blue)- %an%C(reset)' --all
+	sw = switch
+[github]
+  user = Bastes
+[pull]
+  rebase = true
+[rerere]
+  enabled = true
+[commit]
+  gpgsign = true

@@ -25,12 +25,12 @@
   bd       = branch -D
   bc       = "!f() { git rev-parse --abbrev-ref HEAD | grep -oP \"^\\w+-\\d+\" ; }; f"
   ca       = commit --amend
-  cb       = checkout -b
   ci       = commit
   cif      = "!f() { BRANCH=`git bc`; git commit -m \"[$BRANCH] $1\"; }; f"
   co       = checkout
   d        = diff
   dhb      = rev-parse --abbrev-ref HEAD
+  doh      = "!f() { BRANCH=`git rev-parse --abbrev-ref HEAD`; git diff origin/$BRANCH; }; f"
   du       = diff @{u}
   edit-modifications = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; vim `f`"
   edit-unmerged      = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
@@ -48,6 +48,7 @@
   rc       = rebase --continue
   s        = status
   sw       = switch
+  swc      = switch -c
   tree     = log --graph --abbrev-commit --decorate --format=format:'%C(blue)%h%C(reset) - %C(green)(%ai%C(reset) %C(green)%ar)%C(reset) %s%C(reset) %C(dim blue)- %an%C(reset)%C(yellow)%d%C(reset)' --all
   tree-fat = log --graph --abbrev-commit --decorate --format=format:'%C(blue)%h%C(reset) - %C(cyan)%aD%C(reset) %C(green)(%ar)%C(reset)%C(yellow)%d%C(reset)%n''          %s%C(reset) %C(dim blue)- %an%C(reset)' --all
 	sw = switch

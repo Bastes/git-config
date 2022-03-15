@@ -22,6 +22,8 @@
   am       = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; git add `f`"
   ap       = add --patch
   au       = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+  b        = branch
+  ba       = branch -a
   bd       = branch -D
   bc       = "!f() { git rev-parse --abbrev-ref HEAD | grep -oP \"^\\w+-\\d+\" ; }; f"
   ca       = commit --amend
@@ -44,6 +46,7 @@
   pfl      = push --force-with-lease
   pflo     = push --force-with-lease origin
   pfloh    = push --force-with-lease origin HEAD
+  pom      = pull origin master
   ra       = rebase --abort
   rc       = rebase --continue
   s        = status

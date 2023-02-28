@@ -16,7 +16,7 @@
   status      = auto
   interactive = auto
 [alias]
-  abandon-branch-for = "!f() { git branch | ag '^\\* ' | head -n 1 | cut -d' ' -f2 ; }; BRANCH=`f`; git checkout $1 && git pull origin $1 && git fetch origin --prune && git branch -D $BRANCH #"
+  abandon-branch-for = "!f() { git branch | grep '^\\* ' | head -n 1 | cut -d' ' -f2 ; }; BRANCH=`f`; git checkout $1 && git pull origin $1 && git fetch origin --prune && git branch -D $BRANCH #"
   add-modifications  = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; git add `f`"
   add-unmerged       = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
   am       = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; git add `f`"
@@ -28,8 +28,9 @@
   bc       = "!f() { git rev-parse --abbrev-ref HEAD | grep -oP \"\\w+-\\d+\" ; }; f"
   ca       = commit --amend
   ci       = commit
-  cif      = "!f() { BRANCH=`git bc`; git commit -m \"[$BRANCH] $1\"; }; f"
-  co       = checkout
+  cf       = commit --fixup
+  cs       = commit --squash
+  cif      = "!f() { BRANCH=`git bc`; git commit -m \"$BRANCH: $1\"; }; f"
   d        = diff
   dhb      = rev-parse --abbrev-ref HEAD
   doh      = "!f() { BRANCH=`git rev-parse --abbrev-ref HEAD`; git diff origin/$BRANCH; }; f"
@@ -47,14 +48,19 @@
   pflo     = push --force-with-lease origin
   pfloh    = push --force-with-lease origin HEAD
   pom      = pull origin master
+  poh      = pull origin HEAD
   ra       = rebase --abort
   rc       = rebase --continue
   s        = status
   sw       = switch
   swc      = switch -c
+  t        = tree
   tree     = log --graph --abbrev-commit --decorate --format=format:'%C(blue)%h%C(reset) - %C(green)(%ai%C(reset) %C(green)%ar)%C(reset) %s%C(reset) %C(dim blue)- %an%C(reset)%C(yellow)%d%C(reset)' --all
   tree-fat = log --graph --abbrev-commit --decorate --format=format:'%C(blue)%h%C(reset) - %C(cyan)%aD%C(reset) %C(green)(%ar)%C(reset)%C(yellow)%d%C(reset)%n''          %s%C(reset) %C(dim blue)- %an%C(reset)' --all
-	sw = switch
+  sw = switch
+  commits-from = "!f() { git log --format=format:'%h %s' $1..HEAD; }; f"
+  replace-branches-from = "!f() { COMMITS=\"$(git commits-from $1)\"; echo \"$COMMITS\" | cut -d' ' -f2 | cut -d':' -f1 | grep '[[:alpha:]]\\+-[[:digit:]]\\+' | uniq; }; f"
+  branch-starting-by = "!f() { git branch --no-color | cut -c3- | grep -P \"^$1\"; }; f"
 [github]
   user = Bastes
 [pull]

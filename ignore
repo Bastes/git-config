@@ -79,3 +79,6 @@ webpack/client/elm-stuff/Session.vim
 /_build/
 /deps/
 /assets/node_modules
+
+# put files to ignore in this directory
+/.gitignored

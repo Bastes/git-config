@@ -1,7 +1,7 @@
 [include]
   path = "./perso"
-[includeIf "gitdir:~/Projects/42/"]
-  path = "./42"
+[includeIf "gitdir:~/Valtech/"]
+  path = "./Valtech"
 [color]
   ui = true
 [branch]
@@ -69,3 +69,5 @@
   enabled = true
 [commit]
   gpgsign = true
+[init]
+  defaultBranch = main

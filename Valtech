@@ -1,5 +1,11 @@
+[http]
+  sslVerify = true
+[credential "https://*.kbrw.fr"]
+  protocol = https
+  host = vuittonadm-sb-gsc-ui.kbrw.fr
+  username = git
+  helper = cache
 [user]
   name = Michel Belleville
   email = michel.belleville@valtech.com
   signingkey = 730F16014FB50AD3A49D18EF02C582960869D8A0
-

@@ -25,12 +25,12 @@
   b        = branch
   ba       = branch -a
   bd       = branch -D
-  bc       = "!f() { git rev-parse --abbrev-ref HEAD | grep -oP \"\\w+-\\d+\" ; }; f"
+  bc       = "!f() { git rev-parse --abbrev-ref HEAD | grep -oE \"\\w+-\\d+\" ; }; f"
   ca       = commit --amend
   ci       = commit
   cf       = commit --fixup
   cs       = commit --squash
-  cif      = "!f() { BRANCH=`git bc`; git commit -m \"$BRANCH: $1\"; }; f"
+  cif      = "!f() { BRANCH=`git bc`; git commit -m \"[$BRANCH] $1\"; }; f"
   d        = diff
   dhb      = rev-parse --abbrev-ref HEAD
   doh      = "!f() { BRANCH=`git rev-parse --abbrev-ref HEAD`; git diff origin/$BRANCH; }; f"

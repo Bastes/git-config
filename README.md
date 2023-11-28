@@ -2,6 +2,6 @@
 
 ## Install
 
-```fish
-$ git clone git@github.com:Bastes/git-config.git ~/.config/git ; and echo "[include]"\n"  path = ~/.git/config/config" >> .gitconfig
+```sh
+$ git clone git@github.com:Bastes/git-config.git ~/.config/git
 ```

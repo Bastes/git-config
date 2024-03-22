@@ -4,7 +4,8 @@
   protocol = https
   host = vuittonadm-sb-gsc-ui.kbrw.fr
   username = git
-  helper = cache
+  helper = /Users/michel.belleville/.local/bin/git-credential-kbrw
+  credentialStore = cache --timeout 3600
 [user]
   name = Michel Belleville
   email = michel.belleville@valtech.com

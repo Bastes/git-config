@@ -18,7 +18,6 @@ vendor/old.bundle
 # only for rbenv custom hooks
 /rbenv.d.envrc
 
-/.envrc
 /.pry_history
 /.pryrc
 
@@ -82,3 +81,5 @@ webpack/client/elm-stuff/Session.vim
 
 # put files to ignore in this directory
 /.gitignored
+
+.envrc

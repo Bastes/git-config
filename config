@@ -29,6 +29,7 @@
   ca       = commit --amend
   ci       = commit
   cf       = commit --fixup
+  cm       = commit -m
   cs       = commit --squash
   cif      = "!f() { BRANCH=`git bc`; git commit -m \"[$BRANCH] $1\"; }; f"
   d        = diff

@@ -33,6 +33,7 @@
   cs       = commit --squash
   cif      = "!f() { BRANCH=`git bc`; git commit -m \"[$BRANCH] $1\"; }; f"
   d        = diff
+  dc       = diff --cached
   dhb      = rev-parse --abbrev-ref HEAD
   doh      = "!f() { BRANCH=`git rev-parse --abbrev-ref HEAD`; git diff origin/$BRANCH; }; f"
   du       = diff @{u}

@@ -37,10 +37,10 @@
   dhb      = rev-parse --abbrev-ref HEAD
   doh      = "!f() { BRANCH=`git rev-parse --abbrev-ref HEAD`; git diff origin/$BRANCH; }; f"
   du       = diff @{u}
-  edit-modifications = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; vim `f`"
-  edit-unmerged      = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
-  em       = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; vim `f`"
-  eu       = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+  edit-modifications = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; nvim `f`"
+  edit-unmerged      = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; nvim `f`"
+  em       = "!f() { (git ls-files --other --exclude-standard ; git ls-files --modified) | cut -f2 | sort -u ; }; nvim `f`"
+  eu       = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; nvim `f`"
   fpo      = fetch --prune origin
   last-message = log -n 1 --format=format:'%s'
   lp       = log -p

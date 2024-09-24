@@ -31,7 +31,7 @@
   cf       = commit --fixup
   cm       = commit -m
   cs       = commit --squash
-  cif      = "!f() { BRANCH=`git bc`; git commit -m \"[$BRANCH] $1\"; }; f"
+  cif      = "!f() { BRANCH=`git bc`; if [ "$BRANCH" == "" ]; then echo "not on a feature branch"; (exit 1); else git commit -m \"[$BRANCH] $1\"; fi }; f"
   d        = diff
   dc       = diff --cached
   dhb      = rev-parse --abbrev-ref HEAD

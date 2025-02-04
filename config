@@ -44,12 +44,13 @@
   fpo      = fetch --prune origin
   last-message = log -n 1 --format=format:'%s'
   lp       = log -p
+  main-or-master = "!f() { git branch | grep -E 'main|master' | sort -r | cut -d' ' -f2 | head -n 1; }; f"
   p        = push
   pf       = push -f
   pfl      = push --force-with-lease
   pflo     = push --force-with-lease origin
   pfloh    = push --force-with-lease origin HEAD
-  pom      = pull origin master
+  pom      = "!f() { git pull origin $(git main-or-master); }; f"
   poh      = pull origin HEAD
   ra       = rebase --abort
   rc       = rebase --continue

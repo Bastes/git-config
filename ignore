@@ -83,3 +83,4 @@ webpack/client/elm-stuff/Session.vim
 /.gitignored
 
 .envrc
+.session

@@ -52,6 +52,7 @@
   pfloh    = push --force-with-lease origin HEAD
   pom      = "!f() { git pull origin $(git main-or-master); }; f"
   poh      = pull origin HEAD
+  rb       = rebase
   ra       = rebase --abort
   rc       = rebase --continue
   s        = status

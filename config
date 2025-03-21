@@ -25,7 +25,7 @@
   b        = branch
   ba       = branch -a
   bd       = branch -D
-  bc       = "!f() { git rev-parse --abbrev-ref HEAD | grep -oE \"\\w+-\\d+\" | head -n1 ; }; f"
+  bc       = "!f() { git rev-parse --abbrev-ref HEAD | cut -f2 -d"/" ; }; f"
   ca       = commit --amend
   ci       = commit
   cf       = commit --fixup

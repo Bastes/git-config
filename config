@@ -65,6 +65,7 @@
   commits-from = "!f() { git log --format=format:'%h %s' $1..HEAD; }; f"
   replace-branches-from = "!f() { COMMITS=\"$(git commits-from $1)\"; echo \"$COMMITS\" | cut -d' ' -f2 | cut -d':' -f1 | grep '[[:alpha:]]\\+-[[:digit:]]\\+' | uniq; }; f"
   branch-starting-by = "!f() { git branch --no-color | cut -c3- | grep -P \"^$1\"; }; f"
+  github-feature-pr = "!f() { gh pr create --title \"[$(git bc)] $1\"; }; f"
 [github]
   user = Bastes
 [pull]

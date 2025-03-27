@@ -30,6 +30,7 @@
   ci       = commit
   cf       = commit --fixup
   cm       = commit -m
+  cmp      = "!f() { commit -m \"$1\" && git push origin HEAD; }; f"
   cs       = commit --squash
   cif      = "!f() { BRANCH=`git bc`; if [ \"$BRANCH\" == \"\" ]; then echo \"not on a feature branch\"; (exit 1); else git commit -m \"[$BRANCH] $1\"; fi }; f"
   d        = diff

@@ -30,7 +30,9 @@
   ci       = commit
   cf       = commit --fixup
   cm       = commit -m
-  cmp      = "!f() { commit -m \"$1\" && git push origin HEAD; }; f"
+  cmaf     = "!f() { git commit -m \"AUTOFORMAT: $1\"; }; f"
+  cmp      = "!f() { git commit -m \"$1\" && git push origin HEAD; }; f"
+  camp     = "!f() { git commit -a -m \"$1\" && git push origin HEAD; }; f"
   cs       = commit --squash
   cif      = "!f() { BRANCH=`git bc`; if [ \"$BRANCH\" == \"\" ]; then echo \"not on a feature branch\"; (exit 1); else git commit -m \"[$BRANCH] $1\"; fi }; f"
   d        = diff
@@ -66,7 +68,7 @@
   commits-from = "!f() { git log --format=format:'%h %s' $1..HEAD; }; f"
   replace-branches-from = "!f() { COMMITS=\"$(git commits-from $1)\"; echo \"$COMMITS\" | cut -d' ' -f2 | cut -d':' -f1 | grep '[[:alpha:]]\\+-[[:digit:]]\\+' | uniq; }; f"
   branch-starting-by = "!f() { git branch --no-color | cut -c3- | grep -P \"^$1\"; }; f"
-  github-feature-pr = "!f() { gh pr create --title \"[$(git bc)] $1\"; }; f"
+  github-feature-pr = "!f() { gh pr create --base staging --title \"[$(git bc)] $1\"; }; f"
 [github]
   user = Bastes
 [pull]

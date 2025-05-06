@@ -1,7 +1,7 @@
 [include]
   path = "./perso"
-[includeIf "gitdir:~/Valtech/"]
-  path = "./Valtech"
+[includeIf "gitdir:~/Workelo/"]
+  path = "./Workelo"
 [color]
   ui = true
 [branch]

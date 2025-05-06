@@ -62,6 +62,8 @@
   sw       = switch
   swc      = switch -c
   t        = tree
+  tb       = tree-branch
+  tree-branch = log --graph --abbrev-commit --decorate --format=format:'%C(blue)%h%C(reset) - %C(green)(%ai%C(reset) %C(green)%ar)%C(reset) %s%C(reset) %C(dim blue)- %an%C(reset)%C(yellow)%d%C(reset)'
   tree     = log --graph --abbrev-commit --decorate --format=format:'%C(blue)%h%C(reset) - %C(green)(%ai%C(reset) %C(green)%ar)%C(reset) %s%C(reset) %C(dim blue)- %an%C(reset)%C(yellow)%d%C(reset)' --all
   tree-fat = log --graph --abbrev-commit --decorate --format=format:'%C(blue)%h%C(reset) - %C(cyan)%aD%C(reset) %C(green)(%ar)%C(reset)%C(yellow)%d%C(reset)%n''          %s%C(reset) %C(dim blue)- %an%C(reset)' --all
   sw = switch

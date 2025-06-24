@@ -26,6 +26,10 @@
   ba       = branch -a
   bd       = branch -D
   bc       = "!f() { git rev-parse --abbrev-ref HEAD | grep -oE \"[A-Z]+-[0-9]+\" ; }; f"
+  bsb      = bisect bad
+  bsg      = bisect good
+  bsr      = bisect reset
+  bss      = bisect start
   ca       = commit --amend
   ci       = commit
   cf       = commit --fixup
@@ -56,6 +60,7 @@
   pom      = "!f() { git pull origin $(git main-or-master); }; f"
   poh      = pull origin HEAD
   rb       = rebase
+  rbur     = rebase --update-refs
   ra       = rebase --abort
   rc       = rebase --continue
   s        = status
@@ -71,6 +76,26 @@
   replace-branches-from = "!f() { COMMITS=\"$(git commits-from $1)\"; echo \"$COMMITS\" | cut -d' ' -f2 | cut -d':' -f1 | grep '[[:alpha:]]\\+-[[:digit:]]\\+' | uniq; }; f"
   branch-starting-by = "!f() { git branch --no-color | cut -c3- | grep -P \"^$1\"; }; f"
   github-feature-pr = "!f() { gh pr create --base main --title \"[$(git bc)] $1\"; }; f"
+  smart-pr = "!f() { \
+    base=\"main\"; \
+    title=\"\"; \
+    while [ $# -gt 0 ]; do \
+      case \"$1\" in \
+        --base) \
+          base=\"$2\"; shift 2 ;; \
+        *) \
+          title=\"$1\"; shift ;; \
+      esac; \
+    done; \
+    count=$(git rev-list --count origin/$base..HEAD); \
+    if [ \"$count\" -eq 1 ] && [ -z \"$title\" ]; then \
+      title=$(git log -1 --pretty=%s); \
+    elif [ -z \"$title\" ]; then \
+      echo \"Erreur: Vous devez fournir un titre pour le PR quand il y a plusieurs commits.\"; \
+      exit 1; \
+    fi; \
+    gh pr create --base \"$base\" --title \"$title\"; \
+  }; f"
 [github]
   user = Bastes
 [pull]

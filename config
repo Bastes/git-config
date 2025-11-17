@@ -1,7 +1,7 @@
 [include]
   path = "./perso"
-[includeIf "gitdir:~/Workelo/"]
-  path = "./Workelo"
+[includeIf "gitdir:~/Projects/LeBonCoin/"]
+  path = "./leboncoin"
 [color]
   ui = true
 [branch]

@@ -1,0 +1,20 @@
+[protocol]
+  version = 2
+
+[user]
+  name = Michel Belleville
+  email = michel.belleville@adevinta.com
+  signingkey = 647C51CA6A7F459326BB1D1CDCA4137E3A38E199
+
+[gitreview]
+  remote = origin
+  notopic = true
+
+[url "git@github.mpi-internal.com:"]
+  insteadOf = https://github.mpi-internal.com/
+
+[url "ssh://michel.belleville@review.leboncoin.ci:29418/"]
+  insteadOf = https://review.leboncoin.ci/
+
+[url "ssh://michel.belleville@review.leboncoin.ci:29418/"]
+  insteadOf = ssh://review.leboncoin.ci:29418/

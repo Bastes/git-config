@@ -1,6 +1,10 @@
 [include]
   path = "./perso"
-[includeIf "gitdir:~/Projects/LeBonCoin/"]
+[include]
+  # to activate:
+  # ```sh
+  # cp leboncoin.inactive leboncoin
+  # ```
   path = "./leboncoin"
 [color]
   ui = true

@@ -6,6 +6,10 @@
   # cp leboncoin.inactive leboncoin
   # ```
   path = "./leboncoin"
+[includeIf "gitdir:~/.config/git/"]
+  path = "./perso"
+[includeIf "gitdir:~/.config/nvim/"]
+  path = "./perso"
 [color]
   ui = true
 [branch]

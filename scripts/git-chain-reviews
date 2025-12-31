@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Preconditions
+# ---------------------------------------------------------------------------
+
+NICKNAME="$(git config --get gerrit.nickname || true)"
+
+if [[ -z "$NICKNAME" ]]; then
+    echo "error: gerrit.nickname is not set" >&2
+    echo "hint: git config gerrit.nickname <your-nickname>" >&2
+    exit 1
+fi
+
+if [[ -z "${1:-}" ]]; then
+    echo "error: need a feature identifier" >&2
+    echo "hint: git chain-review my-super-feature [base-ref]" >&2
+    exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# Switch to the new branch
+# ---------------------------------------------------------------------------
+
+FEATURE="$1"
+BASE_REF="${2:-origin/HEAD}"
+
+git switch -c "$NICKNAME/$FEATURE" "$BASE_REF"

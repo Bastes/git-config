@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# ANSI escape codes
+# ---------------------------------------------------------------------------
+
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+RESET="\033[0m"
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+die() {
+    echo "error: $*" >&2
+    exit 1
+}
+
+confirm() {
+    read -r -p "Proceed? [y/N] " answer
+    case "$answer" in
+        y|yes) return 0 ;;
+        *)     echo "Aborted."; exit 0 ;;
+    esac
+}
+
+# ---------------------------------------------------------------------------
+# Preconditions
+# ---------------------------------------------------------------------------
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "Error: jq is required but not installed or not in PATH." >&2
+  exit 127
+fi
+
+NICKNAME="$(git config --get gerrit.nickname || true)"
+[[ -n "$NICKNAME" ]] || die "gerrit.nickname is not set"
+
+BRANCH="$(git symbolic-ref --quiet --short HEAD || true)"
+[[ -n "$BRANCH" ]] || die "not on a branch"
+
+PREFIX="${NICKNAME}/"
+[[ "$BRANCH" == "$PREFIX"* ]] || \
+    die "branch '$BRANCH' does not start with '$PREFIX'"
+
+TOPIC="$BRANCH"
+
+# ---------------------------------------------------------------------------
+# Gerrit host from the remote
+# ---------------------------------------------------------------------------
+
+GERRIT_HOST="$(git remote get-url origin | sed -E 's#^ssh://([^/]+):[0-9]+/.*#\1#')"
+
+# ---------------------------------------------------------------------------
+# Determine remote and default Gerrit branch
+# ---------------------------------------------------------------------------
+
+REMOTE="$(git config --get gerrit.remote || true)"
+
+if [[ -z "$REMOTE" ]]; then
+    REMOTES=()
+    while IFS= read -r line; do
+        REMOTES+=("$line")
+    done < <(git remote)
+
+    case "${#REMOTES[@]}" in
+        0)
+            die "no git remotes found"
+            ;;
+        1)
+            REMOTE="${REMOTES[0]}"
+            ;;
+        *)
+            die "multiple git remotes found; set gerrit.remote explicitly"
+            ;;
+    esac
+fi
+
+DEFAULT_BRANCH_REF="$(git symbolic-ref --quiet refs/remotes/$REMOTE/HEAD)"
+[[ -n "$DEFAULT_BRANCH_REF" ]] || die "could not determine default branch ref"
+
+DEFAULT_BRANCH="${DEFAULT_BRANCH_REF#refs/remotes/$REMOTE/}"
+
+# ---------------------------------------------------------------------------
+# Collect Change-Ids from current branch (excluding default branch)
+# ---------------------------------------------------------------------------
+
+BASE="$(git merge-base HEAD "$REMOTE/$DEFAULT_BRANCH")"
+
+LOCAL_CHANGE_IDS="$(
+    git log "$BASE"..HEAD --pretty=format:%B \
+    | sed -n 's/^Change-Id: //p' \
+    | sort -u
+)"
+
+# ---------------------------------------------------------------------------
+# Query Gerrit for open changes in this topic
+# ---------------------------------------------------------------------------
+
+GERRIT_CHANGES_IDS=()
+
+while IFS= read -r line; do
+    json=$(echo "$line" | jq -c '.')
+    GERRIT_CHANGES_IDS+=("$json")
+done < <(
+    ssh -p 29418 "$GERRIT_HOST" gerrit query \
+        --format=JSON --patch-sets "owner:self status:open topic:$TOPIC" \
+    | grep -v '"type":"stats"'
+)
+
+# ---------------------------------------------------------------------------
+# Split reviews into kept vs to-abandon
+# ---------------------------------------------------------------------------
+
+TO_ABANDON=()
+KEPT=()
+
+for change in "${GERRIT_CHANGES_IDS[@]}"; do
+    NUMBER="$(echo "$change" | jq -r '.number')"
+    CHANGE_ID="$(echo "$change" | jq -r '.id')"
+    SUBJECT="$(echo "$change" | jq -r '.subject')"
+    COMMIT_SHA="$(echo "$change" | jq -r 'if has("currentPatchSet") then .currentPatchSet.revision else (.patchSets | last | .revision) end' | cut -c1-7)"
+
+    entry="$NUMBER|$CHANGE_ID|$COMMIT_SHA|$SUBJECT"
+
+    if grep -q "$CHANGE_ID" <<< "$LOCAL_CHANGE_IDS"; then
+        KEPT+=("$entry")
+    else
+        TO_ABANDON+=("$entry")
+    fi
+done
+
+# ---------------------------------------------------------------------------
+# Report and confirm
+# ---------------------------------------------------------------------------
+
+# Check TO_ABANDON before confirmation
+if [[ ${#TO_ABANDON[@]} -eq 0 ]]; then
+    echo "Nothing to abandon, aborting."
+    exit 0
+fi
+
+print_reviews() {
+    local label="$1"
+    shift
+    local arr=("$@")
+
+    echo "$label"
+    if [[ ${#arr[@]} -eq 0 ]]; then
+        echo -e "  ${RED}NOTHING TO KEEP${RESET}"
+    else
+        for entry in "${arr[@]}"; do
+            IFS='|' read -r NUMBER CHANGE_ID COMMIT_SHA SUBJECT <<< "$entry"
+            echo "- [$COMMIT_SHA] $NUMBER ($CHANGE_ID)"
+            echo "  $SUBJECT"
+        done
+    fi
+    echo
+}
+
+# Print summaries
+print_reviews "Reviews that will be kept:" "${KEPT[@]:-}"
+print_reviews "Reviews that will be abandoned:" "${TO_ABANDON[@]:-}"
+
+confirm
+
+# ---------------------------------------------------------------------------
+# Abandon
+# ---------------------------------------------------------------------------
+
+for entry in "${TO_ABANDON[@]}"; do
+    IFS='|' read -r NUMBER CHANGE_ID COMMIT_SHA SUBJECT <<< "$entry"
+
+    # Print starting line
+    printf "[    ] Abandoning #$NUMBER ($CHANGE_ID)\n$SUBJECT\n"
+
+    ssh -p 29418 "$GERRIT_HOST" \
+        gerrit review --abandon "$NUMBER,1"
+
+    # Move cursor back to overwrite spaces with DONE in green
+    printf '\033[%dA' "2"
+    printf "\r[${GREEN}DONE${RESET}] Abandoning #$NUMBER ($CHANGE_ID)\n$SUBJECT\n"
+    printf '\033[%dB' "2"
+done
+
+echo
+echo "All done."

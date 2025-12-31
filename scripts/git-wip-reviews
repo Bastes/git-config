@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+NICKNAME="$(git config --get gerrit.nickname || true)"
+
+if [[ -z "$NICKNAME" ]]; then
+    echo "error: gerrit.nickname is not set" >&2
+    echo "hint: git config gerrit.nickname <your-nickname>" >&2
+    exit 1
+fi
+
+BRANCH="$(git symbolic-ref --quiet --short HEAD || true)"
+
+if [[ -z "$BRANCH" ]]; then
+    echo "error: not on a branch (detached HEAD)" >&2
+    exit 1
+fi
+
+PREFIX="${NICKNAME}/"
+
+if [[ "$BRANCH" != "$PREFIX"* ]]; then
+    echo "error: branch '$BRANCH' does not start with '$PREFIX'" >&2
+    exit 1
+fi
+
+# --- Action ----------------------------------------------------------------
+
+TOPIC="$BRANCH"
+
+exec git review -t "$TOPIC" -w

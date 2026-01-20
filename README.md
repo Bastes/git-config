@@ -7,7 +7,11 @@ $ git clone git@github.com:Bastes/git-config.git ~/.config/git
 ```
 
 Add `~/.config/git/scripts` to your `$PATH` for custom scripts to be
-automatically discovered.
+automatically discovered:
+
+```fish
+$ fish_add_path ~/.config/git/scripts
+```
 
 ## Gerrit review enhancements
 

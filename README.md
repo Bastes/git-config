@@ -29,7 +29,7 @@ $ git config gerrit.nickname <your-identifier>
 
 Working on a feature, create a local branch based on the central branch:
 ```sh
-$ git chain-review my-super-branch
+$ git new-wip-branch my-super-branch
 ```
 
 This creates a branch `<your-identifier>/my-super-branch` (using your

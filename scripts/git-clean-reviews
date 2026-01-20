@@ -101,12 +101,14 @@ LOCAL_CHANGE_IDS="$(
 
 GERRIT_CHANGES_IDS=()
 
+echo "ssh -p 29418 \"$GERRIT_HOST\" gerrit query --format=JSON --patch-sets \"owner:self is:private status:open topic:$TOPIC\""
+
 while IFS= read -r line; do
     json=$(echo "$line" | jq -c '.')
     GERRIT_CHANGES_IDS+=("$json")
 done < <(
     ssh -p 29418 "$GERRIT_HOST" gerrit query \
-        --format=JSON --patch-sets "owner:self status:open topic:$TOPIC" \
+        --format=JSON --patch-sets "owner:self is:private status:open topic:$TOPIC" \
     | grep -v '"type":"stats"'
 )
 

@@ -27,4 +27,4 @@ fi
 
 TOPIC="$BRANCH"
 
-exec git review -t "$TOPIC" -w
+exec git review -t "$TOPIC" -pw

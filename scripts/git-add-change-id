@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# Preconditions
+# ---------------------------------------------------------------------------
+
+if ! git rev-parse --verify -q HEAD >/dev/null; then
+    echo "error: HEAD has no commit to amend" >&2
+    exit 1
+fi
+
+HOOK="$(git rev-parse --git-path hooks/commit-msg)"
+
+if [[ ! -x "$HOOK" ]]; then
+    echo "error: no executable commit-msg hook found at $HOOK" >&2
+    echo "hint: install Gerrit's commit-msg hook for this repository first" >&2
+    exit 1
+fi
+
+CREATE_CHANGE_ID="$(git config --get gerrit.createChangeId || true)"
+
+if [[ "$CREATE_CHANGE_ID" == "false" ]]; then
+    echo "error: gerrit.createChangeId is set to false in this repo, refusing to add one" >&2
+    exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# Let Gerrit's own hook add the trailer, forcing "always" so fixup!/squash!
+# commits get one too: unlike a normal commit flow, there is no target
+# commit here for them to inherit a Change-Id from at autosquash time.
+# ---------------------------------------------------------------------------
+
+MSG_FILE="$(git rev-parse --git-path COMMIT_EDITMSG).add-change-id.$$"
+ORIG_FILE="$MSG_FILE.orig"
+trap 'rm -f "$MSG_FILE" "$ORIG_FILE"' EXIT
+
+git log -1 --format=%B HEAD > "$MSG_FILE"
+cp "$MSG_FILE" "$ORIG_FILE"
+
+TRAILER_BEFORE="$(git interpret-trailers --no-divider --parse < "$ORIG_FILE" | grep -i '^Change-Id:' || true)"
+
+if [[ -n "$TRAILER_BEFORE" ]]; then
+    echo "HEAD ($(git rev-parse --short HEAD)) already has a Change-Id, nothing to do"
+    exit 0
+fi
+
+GIT_CONFIG_COUNT=1 \
+GIT_CONFIG_KEY_0=gerrit.createChangeId \
+GIT_CONFIG_VALUE_0=always \
+"$HOOK" "$MSG_FILE"
+
+TRAILER_AFTER="$(git interpret-trailers --no-divider --parse < "$MSG_FILE" | grep -i '^Change-Id:' || true)"
+
+if [[ -z "$TRAILER_AFTER" ]]; then
+    echo "error: commit-msg hook did not add a Change-Id to HEAD ($(git rev-parse --short HEAD))" >&2
+    echo "hint: this can happen if the commit message is empty once stripped of comments" >&2
+    exit 1
+fi
+
+git commit --amend --no-verify -F "$MSG_FILE" >/dev/null
+
+echo "added trailer to $(git rev-parse --short HEAD): $(tail -n 1 <<< "$TRAILER_AFTER")"

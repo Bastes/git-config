@@ -4,7 +4,7 @@
 [user]
   name = Michel Belleville
   email = michel.belleville@adevinta.com
-  signingkey = 647C51CA6A7F459326BB1D1CDCA4137E3A38E199
+  signingkey = 198ABBE607BF7A2AD760E9CA418B739B8BAA132A
 
 [gitreview]
   remote = origin

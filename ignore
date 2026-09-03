@@ -85,3 +85,7 @@ webpack/client/elm-stuff/Session.vim
 
 .envrc
 .session
+
+# claude-specific config
+**/.claude/settings.local.json
+**/.claude/.cc-writes/

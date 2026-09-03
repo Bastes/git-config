@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+tag=$1
+message=$(git log -1 --format=%B)
+
+# Idempotent: do nothing if the message already contains the tag.
+if [[ $message == *"[$tag]"* ]]; then
+    exit 0
+fi
+
+printf '[%s]%s\n' "$tag" "$message" |
+    git commit --amend --file=-
